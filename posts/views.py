@@ -1,3 +1,4 @@
+from django.contrib import messages
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
 
@@ -12,18 +13,16 @@ def post_create(request):
 		print (form.cleaned_data.get("title"))
 		instance.save()
 		# message succes
+		messages.success(request, 'Successfully Created')
 		return HttpResponseRedirect(instance.get_absolute_url())
-	# if request.method == "POST":
-	# 	print ("title" + request.POST.get("content"))
-	# 	print (request.POST.get("title"))
-	# 	#Post.objects.create(title=title)
+	else:
+		messages.error(request, 'Not Successfully Created')
 	context = {
 		"form": form,
 	}
 	return render(request, "post_form.html", context)
 
 def post_detail(request, id=None):#retirve
-	#instance = Post.objects.get(id=1)
 	instance = get_object_or_404(Post, id=id)
 	context = {
 		"title": instance.title,
@@ -37,14 +36,6 @@ def post_list(request):#list_items
 		"object_list" : queryset,
 		"title": "List"
 	}
-	# if request.user.is_authenticated():
-	# 	context = {
-	# 		"title": "My User List"
-	# 	}
-	# else:
-	# 	context = {
-	# 		"title": "List"
-	# 	}
 	return render(request, "index.html", context)
 
 def post_update(request, id=None):
@@ -54,6 +45,7 @@ def post_update(request, id=None):
 		instance = form.save(commit=False)
 		instance.save()
 		# message succes
+		messages.success(request, "<a href='#'>Item</a> Saved", extra_tags='html_safe')
 		return HttpResponseRedirect(instance.get_absolute_url())
 
 	context = {
