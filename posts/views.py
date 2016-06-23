@@ -9,21 +9,21 @@ from .forms import PostForm
 from .models import Post
 
 def post_create(request):
-	form = PostForm(request.POST or None, request.FILES or None)
-	if form.is_valid():
-		instance = form.save(commit=False)
-		print (form.cleaned_data.get("title"))
+	forms = PostForm(request.POST or None, request.FILES or None)
+	if forms.is_valid():
+		instance = forms.save(commit=False)
+		print (forms.cleaned_data.get("title"))
 		instance.save()
 		# message succes
 		messages.success(request, 'Successfully Created')
 		return HttpResponseRedirect(instance.get_absolute_url())
 	context = {
-		"form": form,
+		"forms": forms,
 	}
 	return render(request, "post_form.html", context)
 
-def post_detail(request, id=None):#retirve
-	instance = get_object_or_404(Post, id=id)
+def post_detail(request, slug=None):#retirve
+	instance = get_object_or_404(Post, slug=slug)
 	context = {
 		"title": instance.title,
 		"instance": instance,
@@ -64,7 +64,7 @@ def post_update(request, id=None):
 	context = {
 		"title": instance.title,
 		"instance": instance,
-		"form":form,
+		"forms":forms,
 	}
 	return render(request, "post_form.html", context)
 
