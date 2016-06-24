@@ -1,3 +1,5 @@
+from urllib.parse import quote_plus
+
 from django.contrib import messages
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
@@ -24,9 +26,11 @@ def post_create(request):
 
 def post_detail(request, slug=None):#retirve
 	instance = get_object_or_404(Post, slug=slug)
+	share_string = quote_plus(instance.content)
 	context = {
 		"title": instance.title,
 		"instance": instance,
+		"share_string": share_string,
 	}
 	return render(request, "post_detail.html", context)
 
@@ -51,11 +55,11 @@ def post_list(request):#list_items
 	return render(request, "post_list.html", context)
 
 
-def post_update(request, id=None):
-	instance = get_object_or_404(Post, id=id)
-	form = PostForm(request.POST or None, request.FILES or None, instance=instance)
-	if form.is_valid():
-		instance = form.save(commit=False)
+def post_update(request, slug=None):
+	instance = get_object_or_404(Post, slug=slug)
+	forms = PostForm(request.POST or None, request.FILES or None, instance=instance)
+	if forms.is_valid():
+		instance = forms.save(commit=False)
 		instance.save()
 		# message succes
 		messages.success(request, "<a href='#'>Item</a> Saved", extra_tags='html_safe')
