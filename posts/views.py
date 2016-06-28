@@ -13,9 +13,14 @@ from .models import Post
 def post_create(request):
 	if not request.user.is_staff or not request.user.is_superuser:
 		raise Http404
+
+	# if not request.user.is_authenticated():
+	# 	raise Http404
+		
 	forms = PostForm(request.POST or None, request.FILES or None)
 	if forms.is_valid():
 		instance = forms.save(commit=False)
+		instance.user = request.user
 		print (forms.cleaned_data.get("title"))
 		instance.save()
 		# message succes
